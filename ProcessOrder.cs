@@ -11,13 +11,16 @@ public class ProcessOrder : IInvocable
     private readonly IOrderConnector orderConnector;
     private readonly IFluentEmail email;
 
+    private readonly ISLConnector sl;
 
 
-    public ProcessOrder(ILogger<ProcessOrder> logger, IOrderConnector orderConnector, IFluentEmail email)
+
+    public ProcessOrder(ILogger<ProcessOrder> logger, IOrderConnector orderConnector, IFluentEmail email, ISLConnector sl)
     {
         this.logger = logger;
         this.orderConnector = orderConnector;
         this.email = email;
+        this.sl = sl;
     }
 
     public async Task Invoke()
@@ -27,8 +30,8 @@ public class ProcessOrder : IInvocable
         if (nextOrder != null)
         {
             logger.LogInformation("Processing order {@nextOrder}", nextOrder);
-   
-            
+            var item = new Items {ItemCode = "9000362", ItemName = "New Items Update from SL"};
+            await sl.UpdateItems(item);
             var emailTemplate = 
                 @"<p>Dear @Model.CustomerName,</p> 
                 <p>Your order of @Model.QuantityOrdered @Model.ItemName has been received!</p>

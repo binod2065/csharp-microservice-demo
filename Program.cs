@@ -67,11 +67,8 @@ namespace OrderProcessingWorker
                         .AddSmtpSender(smtpHost, 587, smtpUser, smtpPass);
 
                     services.AddSingleton<IOrderConnector, OrderQueueConnector>();
-                    services.AddSingleton(serviceLayer => new SLConnection(
-                        Environment.GetEnvironmentVariable("SAP_SL_URL"),
-                        Environment.GetEnvironmentVariable("SAP_SL_COMPANYDB"),
-                        Environment.GetEnvironmentVariable("SAP_SL_USER"),
-                        Environment.GetEnvironmentVariable("SAP_SL_PASS")));
+                  
+                    services.AddSingleton<ISLConnector , SlConnetor>();
 
                     services.AddScheduler();
                     services.AddTransient<ProcessOrder>();
