@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Coravel;
 using Serilog;
 using Serilog.Formatting.Json;
+using B1SLayer;
 
 namespace OrderProcessingWorker
 {
@@ -18,7 +19,7 @@ namespace OrderProcessingWorker
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
-                .WriteTo.File("logs/log.txt", 
+                .WriteTo.File("logs/log.txt",
                     restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information,
                     rollingInterval: RollingInterval.Day)
                 .WriteTo.File("logs/errorlog.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
@@ -64,8 +65,14 @@ namespace OrderProcessingWorker
                         .AddFluentEmail("SAP.Support@valiant-oman.com")
                         .AddRazorRenderer()
                         .AddSmtpSender(smtpHost, 587, smtpUser, smtpPass);
-                        
+
                     services.AddSingleton<IOrderConnector, OrderQueueConnector>();
+                    services.AddSingleton(serviceLayer => new SLConnection(
+                        Environment.GetEnvironmentVariable("SAP_SL_URL"),
+                        Environment.GetEnvironmentVariable("SAP_SL_COMPANYDB"),
+                        Environment.GetEnvironmentVariable("SAP_SL_USER"),
+                        Environment.GetEnvironmentVariable("SAP_SL_PASS")));
+
                     services.AddScheduler();
                     services.AddTransient<ProcessOrder>();
                 });
