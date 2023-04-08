@@ -61,7 +61,7 @@ namespace OrderProcessingWorker
                     var smtpPass = Environment.GetEnvironmentVariable("SMTP_PASS");
 
                     services
-                        .AddFluentEmail("hello@morrotec.co.uk")
+                        .AddFluentEmail("SAP.Support@valiant-oman.com")
                         .AddRazorRenderer()
                         .AddSmtpSender(smtpHost, 587, smtpUser, smtpPass);
                         
